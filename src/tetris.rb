@@ -299,8 +299,8 @@ class Tetris
   def reset_mino
     @mino_x = 5
     @mino_y = 0
-    @mino_type = rand(7) % MINO_TYPE_MAX
-    @mino_angle = rand(4) % MINO_ANGLE_MAX
+    @mino_type = rand(MINO_TYPE_MAX) % MINO_TYPE_MAX
+    @mino_angle = rand(MINO_ANGLE_MAX) % MINO_ANGLE_MAX
   end
 
   # 壁や他のミノに当たっているかどうかを判定する
