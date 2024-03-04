@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+    environment:
+      # NOTE: 現状はdocker compose runコマンドであれば'Encoding.default_external'がUTF-8となる
+      #       docker run コマンドだと'Encoding.default_external'がUS-ASCIIになってしまう
+      RUBYOPT: -EUTF-8
+    command: 'bin/ruby src/tetris.rb'
+    volumes:
+      - .:/app
+      - bundle:/usr/local/bundle
+    ports:
+      - 1234:1234
+    tty: true
+    stdin_open: true
+
+volumes:
+  bundle:
