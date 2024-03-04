@@ -1,13 +1,11 @@
 require 'io/console'
 
 class Tetris
-  attr_accessor :field, :display_buffer, :mino_x, :mino_y
   # テトリスのフィールド
   FIELD_WIDTH = 12.freeze
   FIELD_HEIGHT = 22.freeze
 
   # ミノ
-  # TODO: 別ファイルに移動するかあとで検討
   TETRIMINOS = {
     'I' => 0,
     'O' => 1,
@@ -23,7 +21,7 @@ class Tetris
     'ANGLE_180' => 2,
     'ANGLE_270' => 3,
   }.freeze
-  MINO_ANGLE_MAX = 4.freeze
+  MINO_ANGLE_MAX = MINO_ANGLE.count.freeze
   MINO_WIDTH = 4.freeze
   MINO_HEIGHT = 4.freeze
   MINO_SHAPES = {
@@ -33,70 +31,260 @@ class Tetris
         [0, 1, 0, 0],
         [0, 1, 0, 0],
         [0, 1, 0, 0],
-      ]
-    }
-  }
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    TETRIMINOS['O'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    TETRIMINOS['S'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [1, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 0, 1, 1],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 0],
+      ],
+    },
+    TETRIMINOS['Z'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 0, 0, 0],
+        [1, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 1],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    TETRIMINOS['J'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [1, 1, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 1, 1],
+        [0, 0, 0, 0],
+      ],
+    },
+    TETRIMINOS['L'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [0, 0, 1, 0],
+        [1, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 0, 0],
+        [0, 1, 1, 1],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    TETRIMINOS['T'] => {
+      MINO_ANGLE['ANGLE_0'] => [
+        [0, 0, 0, 0],
+        [1, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_90'] => [
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_180'] => [
+        [0, 0, 0, 0],
+        [0, 0, 1, 0],
+        [0, 1, 1, 1],
+        [0, 0, 0, 0],
+      ],
+      MINO_ANGLE['ANGLE_270'] => [
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+  }.freeze
+  MINO_TYPE_MAX = MINO_SHAPES.count.freeze
 
   def initialize
-    # TODO: メソッドに定義
     @field = initialize_field
+    reset_mino
+  end
 
-    mino_x = 5
-    mino_y = 0
-    mino_type = 0
-    mino_angle = 0
+  def start
+    time = Time.now.to_i
 
-    # TODO: メソッドに定義
     while true
-      # 標準出力をクリア
-      puts "\e[H\e[2J"
-
       # ミノの移動
       # 非同期モードにすることで、キー入力を待たずに処理を進める
-      # TODO: メソッドに定義
       STDIN.raw!
       if IO.select([STDIN], nil, nil, 0)
         input = STDIN.getc
         case input
         when 's'
-          mino_y += 1
+          @mino_y += 1 unless is_hit?(@mino_x, @mino_y+1, @mino_type, @mino_angle)
         when 'a'
-          mino_x -= 1
+          @mino_x -= 1 unless is_hit?(@mino_x-1, @mino_y, @mino_type, @mino_angle)
         when 'd'
-          mino_x += 1
-        when 0x20
-          mino_angle = (mino_angle + 1) % 4
+          @mino_x += 1 unless is_hit?(@mino_x+1, @mino_y, @mino_type, @mino_angle)
+        when ' '
+          unless is_hit?(@mino_x, @mino_y, @mino_type, (@mino_angle + 1) % MINO_ANGLE_MAX)
+            @mino_angle = (@mino_angle + 1) % MINO_ANGLE_MAX
+          end
+        when 'q'
+          exit
         end
+        # 非同期モードを解除
+        STDIN.cooked!
+        display
+      else
+        # 非同期モードを解除
+        STDIN.cooked!
       end
-      # 非同期モードを解除
-      STDIN.cooked!
 
-      display_buffer = Marshal.load(Marshal.dump(@field))
-      mino_y += 1
-      MINO_HEIGHT.times do |i|
-        MINO_WIDTH.times do |j|
-          display_buffer[mino_y + i][mino_x + j] = 1 if MINO_SHAPES[mino_type][mino_angle][i][j] == 1
+      if (time != Time.now.to_i)
+        time = Time.now.to_i
+
+        if is_hit?(@mino_x, @mino_y+1, @mino_type, @mino_angle)
+          # ミノが着地したらフィールドに固定する
+          MINO_HEIGHT.times do |i|
+            MINO_WIDTH.times do |j|
+              @field[@mino_y + i][@mino_x + j] = 1 if MINO_SHAPES[@mino_type][@mino_angle][i][j] == 1
+            end
+          end
+          # ラインが揃っているかどうかを判定
+          (FIELD_HEIGHT-1).times do |i|
+            line_fill = true
+            1.upto(FIELD_HEIGHT-1) do |j|
+              if @field[i][j] == 0
+                line_fill = false
+                break
+              end
+            end
+            # 揃っているラインがあれば消す
+            if line_fill
+              @field.delete_at(i)
+              @field.unshift(Array.new(FIELD_WIDTH, 0))
+              @field[0][0] = 1
+              @field[0][-1] = 1
+            end
+          end
+          # 新しいミノを生成
+          reset_mino
+        else
+          @mino_y += 1
         end
+
+        display
       end
-
-      display(display_buffer)
-      sleep(1)
-    end
-
-  end
-
-  def display(field = @field)
-    field.each do |row|
-      row.each do |cell|
-        cell == 1 ? print('■') : print(' ')
-      end
-      puts
     end
   end
 
-  def start
-  end
-
+  # 初期状態のフィールドを生成
   def initialize_field
     field = Array.new(FIELD_HEIGHT) { Array.new(FIELD_WIDTH, 0) }
     field.each_with_index do |row, i|
@@ -106,10 +294,53 @@ class Tetris
     end
     field
   end
+
+  # ミノを生成
+  def reset_mino
+    @mino_x = 5
+    @mino_y = 0
+    @mino_type = rand(7) % MINO_TYPE_MAX
+    @mino_angle = rand(4) % MINO_ANGLE_MAX
+  end
+
+  # 壁や他のミノに当たっているかどうかを判定する
+  def is_hit?(_mino_x, _mino_y, _mino_type, _mino_angle)
+    MINO_HEIGHT.times do |i|
+      MINO_WIDTH.times do |j|
+        if MINO_SHAPES[_mino_type][_mino_angle][i][j] == 1
+          return true if @field[_mino_y + i][_mino_x + j] == 1
+        end
+      end
+    end
+    false
+  end
+
+  # 標準出力に描画する
+  def display
+    display_buffer = Marshal.load(Marshal.dump(@field))
+
+    # fieldから複製したdisplay_bufferにミノを追加
+    MINO_HEIGHT.times do |i|
+      MINO_WIDTH.times do |j|
+        display_buffer[@mino_y + i][@mino_x + j] = 1 if MINO_SHAPES[@mino_type][@mino_angle][i][j] == 1
+      end
+    end
+
+    # 標準出力をクリア
+    puts "\e[H\e[2J"
+
+    # display_bufferを標準出力に描画
+    display_buffer.each do |row|
+      row.each do |cell|
+        cell == 1 ? print('⬛') : print('⬜')
+      end
+      print("\n")
+    end
+  end
 end
 
 # if __FILE__ == $0
-  Tetris.new.start
+Tetris.new.start
 # end
 
 
