@@ -11,5 +11,6 @@ docker compose run --rm app bundle install
 docker compose run --rm app bin/ruby src/tetris.rb
 ```
 
-※ Gemfileのライブラリを読み込んだ上でファイルを実行するため、例えばdebuggerでブレークポイントを設定しデバッグが可能
+※ bin/rubyでGemfileのライブラリを読み込んだ上でファイルを実行する
+  例えばdebuggerでブレークポイントの設定が可能
 
